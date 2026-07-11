@@ -26,14 +26,7 @@ planul pe etape.
    ```
    make pin-versions
    ```
-   `WORDPRESS_IMAGE`/`MYSQL_IMAGE`/`PHPMYADMIN_IMAGE`/`WPCLI_IMAGE` din `.env`
-   pornesc ca tag-uri "rolling" (ex. `wordpress:php8.3-apache` — orice
-   versiune e curentă la momentul respectiv). `make pin-versions` le rezolvă
-   la digest-ul exact al imaginii de acum și le suprascrie în `.env`. De
-   atunci încolo, versiunile rămân blocate pentru acest proiect — nu se mai
-   schimbă la `make up`, indiferent cât timp trece sau ce se publică ulterior
-   pe Docker Hub. Un proiect nou, clonat peste 2 luni, va bloca la rândul lui
-   versiunile curente din acel moment — fiecare proiect e independent.
+   (vezi secțiunea „Versiuni" mai jos pentru ce face exact)
 5. Pornește stack-ul:
    ```
    make up
@@ -94,6 +87,17 @@ web la http://localhost:8025, fără să iasă niciodată din mașina ta. Ruta e
 făcută de `mu-plugins/mailpit.php` (git-tracked, activ automat, fără să fie
 nevoie de `theme activate` sau `plugin activate`).
 
+## Versiuni
+
+`WORDPRESS_IMAGE`/`MYSQL_IMAGE`/`PHPMYADMIN_IMAGE`/`WPCLI_IMAGE`/`MAILPIT_IMAGE`
+din `.env` pornesc ca tag-uri "rolling" (ex. `wordpress:php8.3-apache` —
+orice versiune e curentă la momentul respectiv). `make pin-versions` le
+rezolvă la digest-ul exact al imaginii de acum și le suprascrie în `.env`. De
+atunci încolo, versiunile rămân blocate pentru acest proiect — nu se mai
+schimbă la `make up`, indiferent cât timp trece sau ce se publică ulterior pe
+Docker Hub. Un proiect nou, clonat peste 2 luni, va bloca la rândul lui
+versiunile curente din acel moment — fiecare proiect e independent.
+
 ## Comenzi disponibile (Makefile)
 
 - `make pin-versions` — blochează versiunile imaginilor Docker pentru acest proiect (o singură dată, înainte de primul `make up`)
@@ -112,7 +116,7 @@ nevoie de `theme activate` sau `plugin activate`).
 ## Structura folderului
 
 ```
-docker-compose.yml         # wordpress + db + wpcli + phpmyadmin
+docker-compose.yml         # wordpress + db + wpcli + phpmyadmin + mailpit
 Makefile                   # comenzile de mai sus
 scripts/wp-install.sh      # logica din spatele `make wp-install`
 scripts/pin-versions.sh    # logica din spatele `make pin-versions`
