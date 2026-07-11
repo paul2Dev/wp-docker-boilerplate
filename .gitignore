@@ -1,0 +1,6 @@
+.env
+.DS_Store
+Thumbs.db
+html-export/
+wp-admin-credentials.txt
+wp-content/
