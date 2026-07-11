@@ -46,12 +46,14 @@ down:
 
 # Sterge containerele SI volumele (db_data, wp_data) - repornire completa,
 # curata, ca la primul `make up` de dupa clonare. Ireversibil: pierzi baza de
-# date si fisierele WordPress din volume. Fa `make db-export` inainte daca ai
+# date si nucleul WordPress din volume (media din wp-content/uploads/ e pe
+# host, nu in volum, si supravietuieste). Fa `make db-export` inainte daca ai
 # nevoie de datele curente.
 reset:
-	@echo "ATENTIE: sterge COMPLET containerele SI volumele acestui proiect"
-	@echo "(baza de date + fisierele WordPress din wp_data). Ireversibil."
-	@echo "Foloseste 'make db-export' inainte daca ai nevoie de datele curente."
+	@echo "ATENTIE: sterge COMPLET containerele SI volumele acestui proiect (baza"
+	@echo "de date + nucleul WordPress). Ireversibil. Media din wp-content/uploads/"
+	@echo "e pe host, nu se pierde. Foloseste 'make db-export' inainte daca ai"
+	@echo "nevoie de datele din baza de date curenta."
 	@read -p "Scrie 'da' ca sa confirmi: " confirm && [ "$$confirm" = "da" ] || (echo "Anulat."; exit 1)
 	docker compose down -v
 

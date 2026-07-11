@@ -77,13 +77,21 @@ Boilerplate-ul ține o singură temă custom "activă" (git-tracked) o dată —
   (cod vendor, ca `node_modules`). Dacă vrei să continui să lucrezi la ea cu
   istoric git, o muți în `theme/` și actualizezi `THEME_SLUG` să corespundă.
 
+## Media
+
+`wp-content/uploads/` (gitignored, ca și `wp-content/themes/`) e mapat direct
+pe host — pozele/PDF-urile încărcate prin wp-admin trăiesc pe disc, nu doar în
+volumul Docker `wp_data`. Asta înseamnă că **supraviețuiesc unui `make
+reset`** (care șterge volumele) și pot fi copiate/arhivate manual oricând,
+fără nicio comandă dedicată.
+
 ## Comenzi disponibile (Makefile)
 
 - `make pin-versions` — blochează versiunile imaginilor Docker pentru acest proiect (o singură dată, înainte de primul `make up`)
 - `make up` — pornește `db`, `wordpress`, `phpmyadmin` (WordPress: http://localhost:8080, phpMyAdmin: http://localhost:8081)
 - `make wp-install` — instalează WordPress cu admin generat automat, activează tema și pluginurile de bază (o singură dată)
 - `make down` — oprește containerele
-- `make reset` — oprește containerele **și șterge volumele** (db + WordPress) — repornire completă, curată; ireversibil, fă `make db-export` înainte dacă ai nevoie de date
+- `make reset` — oprește containerele **și șterge volumele** (db + nucleul WordPress) — repornire completă, curată; ireversibil, fă `make db-export` înainte dacă ai nevoie de date (media din `wp-content/uploads/` nu e afectată, e pe host)
 - `make restart` — repornește containerele
 - `make logs` — urmărește log-urile
 - `make status` — starea containerelor
@@ -105,7 +113,7 @@ scripts/pin-versions.sh    # logica din spatele `make pin-versions`
 html-export/                # aici intra arhiva site-ului vechi (montata read-only in wpcli ca /export)
 import/                     # scripturi WP-CLI de import (create-page-*.php, etc.) - se scriu per proiect
 theme/                      # sursa git-tracked a temei active (style.css, functions.php, header.php, footer.php, index.php)
-wp-content/                 # gitignored - oglinda live a TUTUROR temelor din container (vezi sectiunea "Teme")
+wp-content/                 # gitignored - toate temele (vezi "Teme") + media incarcata (vezi "Media")
 wp-admin-credentials.txt   # generat de make wp-install (gitignored, nu exista pana la primul install)
 ```
 
