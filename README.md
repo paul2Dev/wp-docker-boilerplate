@@ -1,5 +1,7 @@
 # Boilerplate WordPress + Docker
 
+**De la `git clone` la WordPress instalat, cu admin generat automat: sub 5 minute.**
+
 Punct de pornire pentru un proiect WordPress nou, cu Docker Compose + WP-CLI:
 
 - servicii: WordPress, MySQL, phpMyAdmin, Mailpit (mail catcher local)
