@@ -1,3 +1,12 @@
+# .env nu e comis in git (contine parole locale) - la primul clone nu exista
+# deloc, doar .env.example. Daca lipseste, il generam automat din
+# .env.example inainte sa continuam (GNU Make reia procesul de la capat dupa
+# ce genereaza fisierul inclus lipsa) - altfel orice comanda make, inclusiv
+# `make` gol pentru help, crapa cu o eroare criptica.
+.env:
+	@cp .env.example .env
+	@echo "Am creat .env din .env.example. Revizuieste THEME_SLUG / WEBSITE_NAME / ADMIN_EMAIL, apoi ruleaza din nou comanda."
+
 include .env
 
 .PHONY: help up down reset restart logs status wp wp-install pin-versions db-export db-import shell

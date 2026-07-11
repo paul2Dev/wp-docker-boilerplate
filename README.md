@@ -12,7 +12,8 @@ planul pe etape.
    git clone <url-repo> ../nume-proiect-nou/
    cd ../nume-proiect-nou/
    ```
-2. Completează `.env`:
+2. Completează `.env` (se generează automat din `.env.example` la prima
+   comandă `make` rulată, dacă nu există deja):
    - `THEME_SLUG` — slug-ul temei (folosit și ca nume de folder în `wp-content/themes/`)
    - `WEBSITE_NAME` — numele site-ului (folosit ca titlu WordPress și ca bază pentru
      username-ul admin, generat automat: `adm_user_<slug derivat din WEBSITE_NAME>`).
