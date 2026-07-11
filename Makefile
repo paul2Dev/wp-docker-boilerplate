@@ -21,6 +21,10 @@ down:
 # date si fisierele WordPress din volume. Fa `make db-export` inainte daca ai
 # nevoie de datele curente.
 reset:
+	@echo "ATENTIE: sterge COMPLET containerele SI volumele acestui proiect"
+	@echo "(baza de date + fisierele WordPress din wp_data). Ireversibil."
+	@echo "Foloseste 'make db-export' inainte daca ai nevoie de datele curente."
+	@read -p "Scrie 'da' ca sa confirmi: " confirm && [ "$$confirm" = "da" ] || (echo "Anulat."; exit 1)
 	docker compose down -v
 
 restart:
