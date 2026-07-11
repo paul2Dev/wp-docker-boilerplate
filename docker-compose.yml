@@ -2,6 +2,15 @@ services:
   db:
     image: ${MYSQL_IMAGE}
     restart: unless-stopped
+    # Clientul mariadb din imaginea wordpress:cli (Alpine, folosit de
+    # make db-export/db-import) nu are plugin-ul caching_sha2_password
+    # (implicit in MySQL 8) - trecem pe mysql_native_password, compatibil
+    # cu ambele seturi de unelte client. --skip-ssl dezactiveaza TLS pe
+    # server (conexiunea ramane in reteaua Docker privata a proiectului,
+    # deci nu e un risc real) - fara el, clientul mariadb nu are in lista
+    # de incredere certificatul self-signed generat de MySQL si esueaza cu
+    # eroare de verificare TLS, chiar si cu --skip-ssl pe client.
+    command: --default-authentication-plugin=mysql_native_password --skip-ssl
     environment:
       MYSQL_DATABASE: ${MYSQL_DATABASE}
       MYSQL_USER: ${MYSQL_USER}
@@ -27,6 +36,15 @@ services:
         define('WP_DEBUG_LOG', true);
         define('WP_DEBUG_DISPLAY', false);
         @ini_set('display_errors', 0);
+        // Blocheaza editorul de fisiere din wp-admin (Plugins/Themes >
+        // Editor) si instalarea/update-ul de plugin-uri si teme direct din
+        // UI. Constantele astea se citesc din WORDPRESS_CONFIG_EXTRA la
+        // fiecare incarcare a wp-config.php, per container - serviciul
+        // wpcli nu are aceasta variabila in mediul lui, deci `make wp` /
+        // `make wp-install` raman neafectate (nu e un bypass explicit al
+        // WP-CLI, doar ca acel container nu vede constantele).
+        define('DISALLOW_FILE_EDIT', true);
+        define('DISALLOW_FILE_MODS', true);
     volumes:
       - wp_data:/var/www/html
       # Toate temele (implicite WP + orice instalezi manual/prin wp-cli),

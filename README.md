@@ -82,10 +82,13 @@ Boilerplate-ul ține o singură temă custom "activă" (git-tracked) o dată —
 - `make up` — pornește `db`, `wordpress`, `phpmyadmin` (WordPress: http://localhost:8080, phpMyAdmin: http://localhost:8081)
 - `make wp-install` — instalează WordPress cu admin generat automat, activează tema și pluginurile de bază (o singură dată)
 - `make down` — oprește containerele
+- `make reset` — oprește containerele **și șterge volumele** (db + WordPress) — repornire completă, curată; ireversibil, fă `make db-export` înainte dacă ai nevoie de date
 - `make restart` — repornește containerele
 - `make logs` — urmărește log-urile
 - `make status` — starea containerelor
 - `make wp CMD="..."` — orice altă comandă WP-CLI, ex. `make wp CMD="post list"`
+- `make db-export` — salvează un dump al bazei de date în `backups/db-<timestamp>.sql` (gitignored)
+- `make db-import FILE=backups/db-....sql` — restaurează un dump
 - `make shell` — shell în containerul WordPress
 
 ## Structura folderului
