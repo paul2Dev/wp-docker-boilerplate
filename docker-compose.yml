@@ -57,6 +57,7 @@ services:
       # Docker - supravietuieste unui `make reset` si e usor de copiat/
       # arhivat manual ca backup, fara nicio comanda dedicata.
       - ./wp-content/uploads:/var/www/html/wp-content/uploads
+      - ./mu-plugins:/var/www/html/wp-content/mu-plugins
 
   wpcli:
     image: ${WPCLI_IMAGE}
@@ -90,6 +91,7 @@ services:
       # Docker - supravietuieste unui `make reset` si e usor de copiat/
       # arhivat manual ca backup, fara nicio comanda dedicata.
       - ./wp-content/uploads:/var/www/html/wp-content/uploads
+      - ./mu-plugins:/var/www/html/wp-content/mu-plugins
       - ./import:/import
       - ./html-export:/export:ro
 
@@ -104,6 +106,16 @@ services:
       PMA_HOST: db
       PMA_USER: root
       PMA_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+
+  # Prinde tot mail-ul trimis de WordPress (reset parola, notificari,
+  # Contact Form 7 etc.) fara sa-l livreze cu adevarat - util ca sa
+  # verifici local ce s-ar fi trimis. UI web la http://localhost:${MAILPIT_PORT}.
+  # Ruteaza wp_mail() prin SMTP-ul lui mu-plugins/mailpit.php.
+  mailpit:
+    image: ${MAILPIT_IMAGE}
+    restart: unless-stopped
+    ports:
+      - "${MAILPIT_PORT}:8025"
 
 volumes:
   db_data:

@@ -39,6 +39,7 @@ pin_image WORDPRESS_IMAGE
 pin_image MYSQL_IMAGE
 pin_image PHPMYADMIN_IMAGE
 pin_image WPCLI_IMAGE
+pin_image MAILPIT_IMAGE
 
 echo ""
 echo "Versiunile sunt blocate in .env pentru acest proiect si nu se vor mai"

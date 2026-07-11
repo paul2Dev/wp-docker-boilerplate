@@ -18,7 +18,7 @@ include .env
 help:
 	@echo "Comenzi disponibile:"
 	@echo "  make pin-versions        - blocheaza versiunile imaginilor Docker (o singura data, inainte de primul up)"
-	@echo "  make up                  - porneste db, wordpress, phpmyadmin"
+	@echo "  make up                  - porneste db, wordpress, phpmyadmin, mailpit"
 	@echo "  make wp-install          - instaleaza WordPress cu admin generat automat (o singura data, dupa primul up)"
 	@echo "  make down                - opreste containerele"
 	@echo "  make reset               - opreste containerele SI sterge volumele (cere confirmare)"
@@ -37,9 +37,10 @@ pin-versions:
 	@bash scripts/pin-versions.sh
 
 up:
-	docker compose up -d db wordpress phpmyadmin
+	docker compose up -d db wordpress phpmyadmin mailpit
 	@echo "WordPress: http://localhost:$(WORDPRESS_PORT)"
 	@echo "phpMyAdmin: http://localhost:$(PHPMYADMIN_PORT)"
+	@echo "Mailpit: http://localhost:$(MAILPIT_PORT)"
 
 down:
 	docker compose down

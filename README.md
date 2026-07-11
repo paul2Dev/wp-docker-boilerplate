@@ -85,10 +85,19 @@ volumul Docker `wp_data`. Asta înseamnă că **supraviețuiesc unui `make
 reset`** (care șterge volumele) și pot fi copiate/arhivate manual oricând,
 fără nicio comandă dedicată.
 
+## Mail
+
+Nimic din stack nu poate trimite email real (nu există sendmail/SMTP extern
+configurat) — orice email trimis de WordPress (reset de parolă, notificări,
+formulare Contact Form 7) e prins de **Mailpit**, un server SMTP local cu UI
+web la http://localhost:8025, fără să iasă niciodată din mașina ta. Ruta e
+făcută de `mu-plugins/mailpit.php` (git-tracked, activ automat, fără să fie
+nevoie de `theme activate` sau `plugin activate`).
+
 ## Comenzi disponibile (Makefile)
 
 - `make pin-versions` — blochează versiunile imaginilor Docker pentru acest proiect (o singură dată, înainte de primul `make up`)
-- `make up` — pornește `db`, `wordpress`, `phpmyadmin` (WordPress: http://localhost:8080, phpMyAdmin: http://localhost:8081)
+- `make up` — pornește `db`, `wordpress`, `phpmyadmin`, `mailpit` (WordPress: http://localhost:8080, phpMyAdmin: http://localhost:8081, Mailpit: http://localhost:8025)
 - `make wp-install` — instalează WordPress cu admin generat automat, activează tema și pluginurile de bază (o singură dată)
 - `make down` — oprește containerele
 - `make reset` — oprește containerele **și șterge volumele** (db + nucleul WordPress) — repornire completă, curată; ireversibil, fă `make db-export` înainte dacă ai nevoie de date (media din `wp-content/uploads/` nu e afectată, e pe host)
@@ -113,6 +122,7 @@ scripts/pin-versions.sh    # logica din spatele `make pin-versions`
 html-export/                # aici intra arhiva site-ului vechi (montata read-only in wpcli ca /export)
 import/                     # scripturi WP-CLI de import (create-page-*.php, etc.) - se scriu per proiect
 theme/                      # sursa git-tracked a temei active (style.css, functions.php, header.php, footer.php, index.php)
+mu-plugins/                 # sursa git-tracked a must-use plugins (ex. mailpit.php - vezi "Mail")
 wp-content/                 # gitignored - toate temele (vezi "Teme") + media incarcata (vezi "Media")
 wp-admin-credentials.txt   # generat de make wp-install (gitignored, nu exista pana la primul install)
 ```
