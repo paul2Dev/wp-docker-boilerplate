@@ -1,47 +1,80 @@
-# Boilerplate — migrare arhivă HTML → WordPress
+# Boilerplate WordPress + Docker
 
-Punct de pornire pentru un proiect nou de migrare a unui site static (arhivă
-HTML/CSS/JS exportată) într-o temă WordPress clasică, cu Docker + WP-CLI.
-Vezi `.todo` pentru deciziile de arhitectură stabilite pe proiectul curent și
-planul pe etape.
+Punct de pornire pentru un proiect WordPress nou, cu Docker Compose + WP-CLI:
+
+- servicii: WordPress, MySQL, phpMyAdmin, Mailpit (mail catcher local)
+- instalare automată: admin generat, temă activată, plugin-uri de bază instalate
+- versiuni de imagini Docker blocate per-proiect
+
+Poate fi folosit și ca punct de pornire pentru migrarea unui site static
+existent într-o temă WordPress clasică (vezi pasul opțional cu
+`html-export/` din „Pornire proiect nou"), dar nu e limitat la asta.
+
+`.todo` e un fișier gol, gata pentru notele și planul pe etape ale noului
+proiect.
 
 ## Pornire proiect nou
 
 1. Clonează acest repo într-o locație nouă, cu numele proiectului:
+
    ```
    git clone <url-repo> ../nume-proiect-nou/
    cd ../nume-proiect-nou/
    ```
+
 2. Completează `.env` (se generează automat din `.env.example` la prima
    comandă `make` rulată, dacă nu există deja):
+
    - `THEME_SLUG` — slug-ul temei (folosit și ca nume de folder în `wp-content/themes/`)
    - `WEBSITE_NAME` — numele site-ului (folosit ca titlu WordPress și ca bază pentru
      username-ul admin, generat automat: `adm_user_<slug derivat din WEBSITE_NAME>`).
      Dacă numele conține spații, pune-l între ghilimele: `WEBSITE_NAME="Ferma Populești"`
    - `ADMIN_EMAIL` — emailul admin-ului
    - parolele DB, dacă vrei altele decât valorile implicite
-3. Pune arhiva exportată a site-ului vechi în `html-export/`
+
+3. **Opțional**, dacă transformi un site static existent într-o temă WordPress:
+   pune arhiva exportată (HTML/CSS/JS) în `html-export/` — nu e folosită
+   automat de nimic, ci ca material de referință pentru asistentul AI
+   (Claude Code), care o poate citi ca să reconstruiască marcajul static ca
+   șabloane PHP în `theme/`. Sari peste pasul ăsta la un proiect nou, de la zero.
+
 4. Blochează versiunile imaginilor Docker pentru acest proiect (o singură
    dată, înainte de primul `make up`):
+
    ```
    make pin-versions
    ```
+
    (vezi secțiunea „Versiuni" mai jos pentru ce face exact)
+
 5. Pornește stack-ul:
+
    ```
    make up
    ```
+
 6. Instalează WordPress (o singură dată, după primul `make up`):
+
    ```
    make wp-install
    ```
-   Comanda genereaza automat un username admin (`adm_user_<slug site>`) și o
-   parolă random puternică de 20 caractere, instalează WordPress, activează
-   tema din `THEME_SLUG` și pluginurile de bază (Contact Form 7, CFDB7, ACF,
-   CAPTCHA 4WP, Limit Login Attempts Reloaded). Credențialele sunt afișate în
-   terminal și salvate local în `wp-admin-credentials.txt` (fișier gitignored,
-   nu ajunge niciodată în repo). Rulând comanda a doua oară, dacă WordPress e
-   deja instalat, nu se suprascrie nimic.
+
+   Comanda automat:
+
+   - generează un username admin (`adm_user_<slug site>`) și o parolă random
+     puternică de 20 caractere
+   - instalează WordPress și activează tema din `THEME_SLUG`
+   - instalează și activează pluginurile de bază:
+     - Contact Form 7
+     - CFDB7 (Database Addon for Contact Form 7)
+     - ACF (Advanced Custom Fields)
+     - CAPTCHA 4WP
+     - Limit Login Attempts Reloaded
+   - afișează credențialele în terminal și le salvează local în
+     `wp-admin-credentials.txt` (fișier gitignored, nu ajunge niciodată în repo)
+
+   Rulând comanda a doua oară, dacă WordPress e deja instalat, nu se
+   suprascrie nimic.
 
 ## Teme
 
@@ -64,6 +97,7 @@ Boilerplate-ul ține o singură temă custom "activă" (git-tracked) o dată —
   istoricul git), actualizezi header-ul din `theme/style.css` (Theme Name,
   Text Domain) și `THEME_SLUG` din `.env`, apoi `make up` (remontează la noul
   path) + `make wp CMD="theme activate <noul-slug>"`.
+
 - **Pornești de la o temă existentă** (WordPress.org sau un zip cumpărat) —
   `make wp CMD="theme install <slug> --activate"` (sau extragi zip-ul manual
   în `wp-content/themes/`) — apare imediat, editabilă, dar necomisă în git
@@ -89,14 +123,21 @@ nevoie de `theme activate` sau `plugin activate`).
 
 ## Versiuni
 
-`WORDPRESS_IMAGE`/`MYSQL_IMAGE`/`PHPMYADMIN_IMAGE`/`WPCLI_IMAGE`/`MAILPIT_IMAGE`
-din `.env` pornesc ca tag-uri "rolling" (ex. `wordpress:php8.3-apache` —
-orice versiune e curentă la momentul respectiv). `make pin-versions` le
-rezolvă la digest-ul exact al imaginii de acum și le suprascrie în `.env`. De
-atunci încolo, versiunile rămân blocate pentru acest proiect — nu se mai
-schimbă la `make up`, indiferent cât timp trece sau ce se publică ulterior pe
-Docker Hub. Un proiect nou, clonat peste 2 luni, va bloca la rândul lui
-versiunile curente din acel moment — fiecare proiect e independent.
+În `.env`, aceste variabile pornesc ca tag-uri "rolling" (ex.
+`wordpress:php8.3-apache` — orice versiune e curentă la momentul respectiv):
+
+- `WORDPRESS_IMAGE`
+- `MYSQL_IMAGE`
+- `PHPMYADMIN_IMAGE`
+- `WPCLI_IMAGE`
+- `MAILPIT_IMAGE`
+
+`make pin-versions` le rezolvă la digest-ul exact al imaginii de acum și le
+suprascrie în `.env`. De atunci încolo, versiunile rămân blocate pentru acest
+proiect — nu se mai schimbă la `make up`, indiferent cât timp trece sau ce se
+publică ulterior pe Docker Hub. Un proiect nou, clonat peste 2 luni, va
+bloca la rândul lui versiunile curente din acel moment — fiecare proiect e
+independent.
 
 ## Comenzi disponibile (Makefile)
 
@@ -122,7 +163,7 @@ scripts/wp-install.sh      # logica din spatele `make wp-install`
 scripts/pin-versions.sh    # logica din spatele `make pin-versions`
 .env / .env.example        # config local (porturi, parole DB, THEME_SLUG, WEBSITE_NAME, ADMIN_EMAIL, imagini Docker)
 .gitignore                 # .env, .todo, html-export/, wp-admin-credentials.txt, wp-content/ raman locale, necomise
-.todo                      # planul de migrare (decizii de arhitectură + etape)
+.todo                      # gol - notele si planul pe etape ale proiectului curent
 html-export/                # aici intra arhiva site-ului vechi (montata read-only in wpcli ca /export)
 import/                     # scripturi WP-CLI de import (create-page-*.php, etc.) - se scriu per proiect
 theme/                      # sursa git-tracked a temei active (style.css, functions.php, header.php, footer.php, index.php)
