@@ -1,6 +1,25 @@
 include .env
 
-.PHONY: up down reset restart logs status wp wp-install pin-versions db-export db-import shell
+.PHONY: help up down reset restart logs status wp wp-install pin-versions db-export db-import shell
+
+.DEFAULT_GOAL := help
+
+# `make` fara argument afiseaza asta, ca sa nu pornesti din greseala vreo
+# comanda (ex. pin-versions, care trage imagini de pe Docker Hub).
+help:
+	@echo "Comenzi disponibile:"
+	@echo "  make pin-versions        - blocheaza versiunile imaginilor Docker (o singura data, inainte de primul up)"
+	@echo "  make up                  - porneste db, wordpress, phpmyadmin"
+	@echo "  make wp-install          - instaleaza WordPress cu admin generat automat (o singura data, dupa primul up)"
+	@echo "  make down                - opreste containerele"
+	@echo "  make reset               - opreste containerele SI sterge volumele (cere confirmare)"
+	@echo "  make restart             - reporneste containerele"
+	@echo "  make logs                - urmareste log-urile"
+	@echo "  make status              - starea containerelor"
+	@echo "  make wp CMD=\"...\"        - orice comanda WP-CLI, ex. make wp CMD=\"post list\""
+	@echo "  make db-export           - salveaza un dump al bazei de date in backups/"
+	@echo "  make db-import FILE=...  - restaureaza un dump (cere confirmare)"
+	@echo "  make shell               - shell in containerul WordPress"
 
 # Blocheaza versiunile imaginilor Docker (WordPress, MySQL, phpMyAdmin, WP-CLI)
 # la digest-ul curent, in .env. Ruleaza o singura data, imediat dupa clonare,
@@ -58,6 +77,9 @@ db-export:
 
 # Importa un dump: make db-import FILE=backups/db-20260711-120000.sql
 db-import:
+	@echo "ATENTIE: suprascrie COMPLET baza de date curenta cu continutul din $(FILE)."
+	@echo "Ireversibil. Foloseste 'make db-export' inainte daca vrei sa pastrezi ce ai acum."
+	@read -p "Scrie 'da' ca sa confirmi: " confirm && [ "$$confirm" = "da" ] || (echo "Anulat."; exit 1)
 	docker compose exec -T db mysql -u $(MYSQL_USER) -p$(MYSQL_PASSWORD) --ssl-mode=DISABLED $(MYSQL_DATABASE) < $(FILE)
 
 # Shell into the wordpress container
